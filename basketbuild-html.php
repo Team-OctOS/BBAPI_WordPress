@@ -18,7 +18,7 @@ function generateAllDirs($dev) {
 	}
 
 	/* Pull JSON from BasketBuild */
-	$json = json_decode(file_get_contents("https://s.basketbuild.com/api4web/devs/" . $dev . "/" . $dir));
+	$json = json_decode(file_get_contents("https://basketbuild.com/api4web/devs/" . $dev . "/" . $dir));
 
 	/* If $_GET['d'] contains a value, we set a back request up */
 	if (!empty($dir)) {
