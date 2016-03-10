@@ -6,6 +6,7 @@ function generateAllDirs($dev) {
         $html = '<table>
                      <tr>
                          <th class="name">Name</th>
+                         <th class="time">Uploaded</th>
                          <th class="MD5">MD5</th>
                      </tr>';
 
@@ -32,12 +33,14 @@ function generateAllDirs($dev) {
 	/* Handle Folders */
 	foreach ($json->folders as $folder) {
 		$html .= '<tr><th><a href="?d=' . $dir . $folder->folder . '">' . $folder->folder . '</a></th>';
-		$html .= '<th>&mdash;</th></tr>';
+		$html .= '<th>&mdash;</th>';
+        $html .= '<th>&mdash;</th></tr>';
 	}
 
 	/* Handle Files */
 	foreach ($json->files as $file) {
 		$html .= '<tr><th><a href="' . $file->filelink . '">' . $file->file . '</a></th>';
+        $html .= '<th>' . date('Y-m-d h:i:s', $file->fileTimestamp) . '</th>';
 		$html .= '<th>' . $file->filemd5 . '</th></tr>';
 	}
 
