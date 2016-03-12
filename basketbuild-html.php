@@ -61,7 +61,8 @@ function generateSingleDir($dev, $dir) {
 	$html = '<table>
                      <tr>
                          <th class="name">Name</th>
-                         <th class="MD5">MD5</th>
+                         <th class="time">Uploaded</th>
+                         <!--<th class="MD5">MD5</th>-->
                      </tr>';
 
 	/* Set dir variable for later use */
@@ -73,6 +74,11 @@ function generateSingleDir($dev, $dir) {
 
 	/* Pull JSON from BasketBuild */
 	$json = json_decode(file_get_contents("https://s.basketbuild.com/api4web/devs/" . $dev . "/" . $dir . $dir2));
+
+	// load files into new array for sorting
+	$sortfiles = $json->files;
+	// Sort the file list
+	usort($sortfiles, 'my_sort');
 
 	/* If $_GET['d'] contains a value, we set a back request up */
 	if (!empty($dir2)) {
@@ -90,10 +96,19 @@ function generateSingleDir($dev, $dir) {
 		$html .= '<th>&mdash;</th></tr>';
 	}
 
-	/* Handle Files */
-	foreach ($json->files as $file) {
+	/* Handle Files (unsorted) */
+/*	foreach ($json->files as $file) {
 		$html .= '<tr><th><a href="' . $file->filelink . '">' . $file->file . '</a></th>';
+        $html .= '<th>' . date('Y-m-d h:i:s', $file->fileTimestamp) . '</th>';
 		$html .= '<th>' . $file->filemd5 . '</th></tr>';
+	}
+*/
+
+	/* Handle Files (sorted by timestamp) */
+	foreach ($sortfiles as $file) {
+		$html .= '<tr><th><a href="' . $file->filelink . '">' . $file->file . '</a></th>';
+        $html .= '<th>' . date('Y-m-d h:i:s', $file->fileTimestamp) . '</th>';
+		$html .= '<!--<th>' . $file->filemd5 . '</th>--></tr>';
 	}
 
 	/* End Table Tag */
@@ -106,5 +121,17 @@ function generateSingleDir($dev, $dir) {
 function generateFileButton($dev, $file) {
 	$html = '<br><a class="nostyle" href="https://s.basketbuild.com/filedl/devs?dev=' . $dev . '&dl=' . $dev . '/' . $file . '"><span class="button">Download File</span></a><br>';
 	return $html;
+}
+
+/* Function used to sort files by timestamp */
+function my_sort($a, $b)
+{
+	if ($a->fileTimestamp > $b->fileTimestamp) {
+		return -1;
+	} else if ($a->fileTimestamp < $b->fileTimestamp) {
+	return 1;
+	} else {
+		return 0;
+	}
 }
 ?>
